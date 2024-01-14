@@ -39,7 +39,7 @@ class Line(Object):
         y_screen = current_y - self.y
 
         square = canvas.create_rectangle(
-            self.x, y_screen, self.x + self.width, y_screen + self.height, fill=self.color)
+            self.x, y_screen - self.height, self.x + self.width, y_screen, fill=self.color)
 
 
 class Obstacle(Object):
@@ -53,7 +53,7 @@ class Obstacle(Object):
         y_screen = current_y - self.y
 
         square = canvas.create_rectangle(
-            self.x, y_screen, self.x + self.width, y_screen + self.height, fill=self.color)
+            self.x, y_screen - self.height, self.x + self.width, y_screen, fill=self.color)
 
 
 class Car(Object):
