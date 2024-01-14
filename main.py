@@ -56,7 +56,7 @@ class Obstacle(Object):
             self.x, y_screen - self.height, self.x + self.width, y_screen, fill=self.color)
 
 
-class Car(Object):
+class Car(Obstacle):
     def __init__(self, x: int, y: int, color: str, velocity: float):
         Object.__init__(self, x, y, color)
 
@@ -109,6 +109,7 @@ class Terrain:
         self.total_obstacles_spawned = 0
         self.total_centered_lines_spawned = -4
 
+        # Draw previous lines on the start
         self.spawn_road_cropped_line(-600)
         self.spawn_road_cropped_line(-450)
         self.spawn_road_cropped_line(-300)
@@ -162,7 +163,7 @@ class Terrain:
             side_line_x2, 0, side_line_x2 + 5, self.screen_height, fill=self.lines_color)
 
 
-class GameManager:
+class GameManagerBase:
     def __init__(self, width: int, height: int, color: str):
         self.window = Tk()
         self.window.title("Car Game - Python GUI Project")
@@ -173,38 +174,58 @@ class GameManager:
         self.canvas = Canvas(self.window, bg=color, height=height, width=width)
         self.canvas.pack()
 
-        self.terrain = Terrain("#ffffff", 300, width, height)
-
         self.window.update()
 
-    def main_loop(self, player: Player):
-        self.init_events(player)
+    def main_loop(self):
+        self.init_events()
 
-        self.next_turn(player)
+        self.__next_turn()
 
         self.window.mainloop()
 
-    def init_events(self, player: Player):
-        self.window.bind('<Left>', lambda event: player.change_direction(LEFT))
-        self.window.bind('<Right>', lambda event: player.change_direction(RIGHT))
+    def init_events(self):
+        pass
 
-    def next_turn(self, player: Player):
-        self.update(player)
-        self.draw(player)
+    def __next_turn(self):
+        self.update()
+        self.draw()
 
-    def update(self, player: Player):
-        self.terrain.update(player.y)
-        player.update(0)
+        self.lazy_call_next_turn(16)
 
-    def draw(self, player: Player):
+    def update(self):
+        pass
+
+    def draw(self):
         self.canvas.delete('all')
 
-        self.label.config(text="Points:{} - {}".format(player.y, player.current_velocity))
+    def lazy_call_next_turn(self, miliseconds: int):
+        self.window.after(miliseconds, self.__next_turn)
 
-        self.terrain.draw(self.canvas, player.y)
-        player.draw(self.canvas, 0)
 
-        self.window.after(16, self.next_turn, player)
+class GameManager(GameManagerBase):
+    def __init__(self, width: int, height: int, color: str):
+        GameManagerBase.__init__(self, width, height, color)
+
+        self.player = Player(int(width / 2), 0, "#00FF00", 300, 500)
+        self.terrain = Terrain("#ffffff", 300, width, height)
+
+    def init_events(self):
+        self.window.bind('<Left>', lambda event: self.player.change_direction(LEFT))
+        self.window.bind('<Right>', lambda event: self.player.change_direction(RIGHT))
+
+    def update(self):
+        GameManagerBase.update(self)
+
+        self.terrain.update(self.player.y)
+        self.player.update(0)
+
+    def draw(self):
+        GameManagerBase.draw(self)
+
+        self.label.config(text="Points:{} - {}".format(self.player.y, self.player.current_velocity))
+
+        self.terrain.draw(self.canvas, self.player.y)
+        self.player.draw(self.canvas, 0)
 
 
 if __name__ == '__main__':
@@ -212,6 +233,4 @@ if __name__ == '__main__':
     height = 600
 
     game_manager = GameManager(800, 600, "#000000")
-    player = Player(int(width / 2), 0, "#00FF00", 300, 500)
-
-    game_manager.main_loop(player)
+    game_manager.main_loop()
