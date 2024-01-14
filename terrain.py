@@ -3,6 +3,7 @@ from tkinter import Canvas
 
 from line import Line
 from obstacle import Obstacle
+from player import Player
 
 
 class Terrain:
@@ -24,9 +25,21 @@ class Terrain:
         self.spawn_road_cropped_line(-300)
         self.spawn_road_cropped_line(-150)
 
+    def check_collisions(self, player: Player) -> bool:
+        for obstacle in self.obstacles:
+            if player.check_collision(obstacle):
+                return True
+
+        return False
+
     def update(self, current_y: int):
-        self.background_items[:] = [item for item in self.background_items if not item.ready_to_delete(current_y)]
-        self.obstacles[:] = [obstacle for obstacle in self.obstacles if not obstacle.ready_to_delete(current_y)]
+        self.cull_objects_outside_terrain(current_y)
+
+        for item in self.background_items:
+            item.update(current_y)
+
+        for obstacle in self.obstacles:
+            obstacle.update(current_y)
 
         self.spawn_obstacle(current_y)
         self.spawn_road_cropped_line(current_y)
@@ -39,6 +52,10 @@ class Terrain:
             obstacle.draw(canvas, current_y)
 
         self.draw_road_side_lines(canvas)
+
+    def cull_objects_outside_terrain(self, current_y: int):
+        self.background_items[:] = [item for item in self.background_items if not item.ready_to_delete(current_y)]
+        self.obstacles[:] = [obstacle for obstacle in self.obstacles if not obstacle.ready_to_delete(current_y)]
 
     def spawn_obstacle(self, current_y: int):
         should_spawn = (current_y / 200 > self.total_obstacles_spawned)
@@ -57,7 +74,7 @@ class Terrain:
             return
 
         position_x = self.screen_width / 2
-        self.obstacles.append(Line(position_x, current_y, self.lines_color))
+        self.background_items.append(Line(position_x, current_y, self.lines_color))
         self.total_centered_lines_spawned += 1
 
     def draw_road_side_lines(self, canvas: Canvas):

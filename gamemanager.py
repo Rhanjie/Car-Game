@@ -9,8 +9,10 @@ class GameManager(GameManagerBase):
     def __init__(self, width: int, height: int, color: str):
         GameManagerBase.__init__(self, width, height, color)
 
-        self.player = Player(int(width / 2), 0, "#00FF00", 300, 500)
+        self.player = Player(int(width / 2), 500, "#00FF00", 300)
         self.terrain = Terrain("#ffffff", 300, width, height)
+
+        self.current_distance = self.player.y
 
     def init_events(self):
         self.window.bind('<Left>', lambda event: self.player.change_direction(LEFT))
@@ -19,13 +21,20 @@ class GameManager(GameManagerBase):
     def update(self):
         GameManagerBase.update(self)
 
-        self.terrain.update(self.player.y)
-        self.player.update(0)
+        self.current_distance = self.player.vertical_distance
+        self.terrain.update(self.current_distance)
+        self.player.update(self.current_distance)
+
+        if self.terrain.check_collisions(self.player):
+            # game over
+            print("GAME OVER")
 
     def draw(self):
         GameManagerBase.draw(self)
 
-        self.label.config(text="Points:{} - {}".format(self.player.y, self.player.current_velocity))
+        current_distance = self.player.vertical_distance
 
-        self.terrain.draw(self.canvas, self.player.y)
+        self.label.config(text="Points:{} - {} km/h".format(int(current_distance), self.player.current_velocity))
+
+        self.terrain.draw(self.canvas, current_distance)
         self.player.draw(self.canvas, 0)

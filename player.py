@@ -6,13 +6,16 @@ from object import Object
 
 
 class Player(Car):
-    def __init__(self, x: int, y: int, color: str, velocity: float, vertical_offset: int):
+    def __init__(self, x: int, y: int, color: str, velocity: float):
         Object.__init__(self, x, y, color)
 
         self.velocity = velocity
         self.current_velocity = 0
 
-        self.vertical_offset = vertical_offset
+        self.vertical_offset = y
+        self.y = -self.vertical_offset
+
+        self.vertical_distance = self.y + self.vertical_offset
 
     def change_direction(self, direction: Direction):
         if direction == RIGHT:
@@ -21,6 +24,11 @@ class Player(Car):
         elif direction == LEFT:
             self.x -= 10
 
+    def update(self, current_y: int):
+        Car.update(self, current_y)
+
+        self.vertical_distance = self.y + self.vertical_offset
+
     def draw(self, canvas: Canvas, current_y: int):
-        square = canvas.create_rectangle(
+        canvas.create_rectangle(
             self.x, self.vertical_offset - self.height, self.x + self.width, self.vertical_offset, fill=self.color)
