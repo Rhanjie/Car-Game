@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Canvas
+from tkinter import Tk, Label, Canvas, Button
 
 
 class GameManagerBase:
@@ -14,6 +14,7 @@ class GameManagerBase:
 
         self.window.update()
 
+        self.is_main_menu = True
         self.is_game_over = False
 
     def main_loop(self):
@@ -30,10 +31,13 @@ class GameManagerBase:
         self.update()
         self.draw()
 
-        if self.is_game_over is True:
+        if self.is_main_menu is True:
+            self.display_main_menu_screen()
+
+        elif self.is_game_over is True:
             self.display_game_over_screen()
         else:
-            self.lazy_call_next_turn(16)
+            self.lazy_call_next_turn(16)  # Gameplay
 
     def update(self):
         pass
@@ -44,10 +48,25 @@ class GameManagerBase:
     def lazy_call_next_turn(self, miliseconds: int):
         self.window.after(miliseconds, self.__next_turn)
 
+    def display_main_menu_screen(self):
+        self.is_main_menu = False  # TODO
+
+        self.__next_turn()
+
     def display_game_over_screen(self):
         self.canvas.delete('all')
 
-        x = self.canvas.winfo_width() / 2
-        y = self.canvas.winfo_height() / 2
+    def back_to_main_menu(self):
+        self.is_main_menu = True
+        self.is_game_over = False
 
-        self.canvas.create_text(x, y, font=('consolas', 70), text="GAME OVER", fill="red")
+        self._restart_gameplay()
+
+    def restart(self):
+        self.is_main_menu = False
+        self.is_game_over = False
+
+        self._restart_gameplay()
+
+    def _restart_gameplay(self):
+        self.__next_turn()

@@ -10,11 +10,19 @@ class Player(Car):
         Object.__init__(self, x, y, color)
 
         self.velocity = velocity
-        self.current_velocity = 0
-
         self.vertical_offset = y
-        self.y = -self.vertical_offset
+        self.start_x = x
 
+        self.current_velocity = 0
+        self.vertical_distance = 0
+        self.y = 0
+
+        self.start()
+
+    def start(self):
+        self.x = self.start_x
+        self.current_velocity = 0
+        self.y = -self.vertical_offset
         self.vertical_distance = self.y + self.vertical_offset
 
     def change_direction(self, direction: Direction):

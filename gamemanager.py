@@ -1,4 +1,4 @@
-from tkinter import LEFT, RIGHT
+from tkinter import LEFT, RIGHT, Button
 
 from gamemanagerbase import GameManagerBase
 from terrain import Terrain
@@ -37,3 +37,27 @@ class GameManager(GameManagerBase):
 
         self.terrain.draw(self.canvas, current_distance)
         self.player.draw(self.canvas, 0)
+
+    def _restart_gameplay(self):
+        self.terrain.start()
+        self.player.start()
+
+        GameManagerBase._restart_gameplay(self)
+
+    def display_game_over_screen(self):
+        GameManagerBase.display_game_over_screen(self)
+
+        x = self.canvas.winfo_width() / 2
+        y = self.canvas.winfo_height() / 2
+        distance = self.player.vertical_distance
+
+        self.canvas.create_text(x, y - 10, font=('consolas', 70), text="GAME OVER", fill="red")
+        self.canvas.create_text(x, y + 60, font=('consolas', 30), text="Distance: {}m".format(distance), fill="green")
+
+        self.canvas.create_line(x - 300, y + 100, x + 300, y + 100, fill="white")
+
+        button_restart = Button(self.window, text="RESTART", command=self.restart, relief='flat')
+        self.canvas.create_window(x - 100, y + 140, window=button_restart)
+
+        button_back = Button(self.window, text="BACK TO MAIN MENU", command=self.back_to_main_menu, relief='flat')
+        self.canvas.create_window(x + 100, y + 140, window=button_back)

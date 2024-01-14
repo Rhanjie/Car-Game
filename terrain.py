@@ -9,12 +9,21 @@ from player import Player
 class Terrain:
     def __init__(self, lines_color: str, road_width: int, screen_width: int, screen_height: int):
         self.lines_color = lines_color
-        self.background_items = []
-        self.obstacles = []
-
         self.road_width = road_width
         self.screen_width = screen_width
         self.screen_height = screen_height
+
+        self.background_items = []
+        self.obstacles = []
+
+        self.total_obstacles_spawned = 0
+        self.total_centered_lines_spawned = -4
+
+        self.start()
+
+    def start(self):
+        self.background_items.clear()
+        self.obstacles.clear()
 
         self.total_obstacles_spawned = 0
         self.total_centered_lines_spawned = -4
