@@ -14,6 +14,8 @@ class GameManagerBase:
 
         self.window.update()
 
+        self.is_game_over = False
+
     def main_loop(self):
         self.init_events()
 
@@ -28,7 +30,10 @@ class GameManagerBase:
         self.update()
         self.draw()
 
-        self.lazy_call_next_turn(16)
+        if self.is_game_over is True:
+            self.display_game_over_screen()
+        else:
+            self.lazy_call_next_turn(16)
 
     def update(self):
         pass
@@ -38,3 +43,11 @@ class GameManagerBase:
 
     def lazy_call_next_turn(self, miliseconds: int):
         self.window.after(miliseconds, self.__next_turn)
+
+    def display_game_over_screen(self):
+        self.canvas.delete('all')
+
+        x = self.canvas.winfo_width() / 2
+        y = self.canvas.winfo_height() / 2
+
+        self.canvas.create_text(x, y, font=('consolas', 70), text="GAME OVER", fill="red")

@@ -26,8 +26,7 @@ class GameManager(GameManagerBase):
         self.player.update(self.current_distance)
 
         if self.terrain.check_collisions(self.player):
-            # game over
-            print("GAME OVER")
+            self.is_game_over = True
 
     def draw(self):
         GameManagerBase.draw(self)
