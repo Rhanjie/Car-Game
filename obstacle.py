@@ -7,7 +7,7 @@ class Obstacle(Object):
     def __init__(self, x: int, y: int, color: str):
         Object.__init__(self, x, y, color)
 
-        self.display_y = self.y
+        self.display_y = 0
 
     def update(self, current_y: int):
         self.display_y = current_y - self.y
