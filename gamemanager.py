@@ -12,6 +12,8 @@ class GameManager(GameManagerBase):
         self.player = Player(int(width / 2), 500, "#00FF00", 300)
         self.terrain = Terrain("#ffffff", 300, width, height)
 
+        self.player.register_road_size(self.terrain.get_left_road_side(), self.terrain.get_right_road_side())
+
         self.current_distance = self.player.y
 
     def init_events(self):

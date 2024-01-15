@@ -87,12 +87,21 @@ class Terrain:
         self.total_centered_lines_spawned += 1
 
     def draw_road_side_lines(self, canvas: Canvas):
-        offset = int((self.screen_width - self.road_width) / 2) - 30
-        side_line_x1 = offset
-        side_line_x2 = self.screen_width - offset
+        side_line_x1 = self.get_left_road_side()
+        side_line_x2 = self.get_right_road_side()
 
         canvas.create_rectangle(
             side_line_x1, 0, side_line_x1 + 5, self.screen_height, fill=self.lines_color)
 
         canvas.create_rectangle(
             side_line_x2, 0, side_line_x2 + 5, self.screen_height, fill=self.lines_color)
+
+    def get_left_road_side(self) -> float:
+        offset = int((self.screen_width - self.road_width) / 2) - 30
+
+        return offset
+
+    def get_right_road_side(self) -> float:
+        offset = int((self.screen_width - self.road_width) / 2) - 30
+
+        return self.screen_width - offset

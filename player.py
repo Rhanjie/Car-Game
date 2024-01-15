@@ -12,10 +12,14 @@ class Player(Car):
         self.vertical_offset = y
         self.start_x = x
 
+        self.y = 0
         self.velocity = 0
         self.current_velocity = 0
         self.vertical_distance = 0
-        self.y = 0
+        self.horizontal_step = 10
+
+        self.road_left_side = 0
+        self.road_right_side = 0
 
         self.start(velocity)
 
@@ -28,12 +32,18 @@ class Player(Car):
         self.y = -self.vertical_offset
         self.vertical_distance = self.y + self.vertical_offset
 
-    def change_direction(self, direction: Direction):
-        if direction == RIGHT:
-            self.x += 10
+    def register_road_size(self, road_left_side: float, road_right_side: float):
+        self.road_left_side = road_left_side
+        self.road_right_side = road_right_side
 
-        elif direction == LEFT:
-            self.x -= 10
+    def change_direction(self, direction: Direction):
+        if direction == RIGHT and self.x + self.width < self.road_right_side:
+            self.x += self.horizontal_step
+
+        if direction == LEFT and self.x - 10 > self.road_left_side:
+            self.x -= self.horizontal_step
+
+
 
     def update(self, current_y: int):
         Car.update(self, current_y)
