@@ -9,17 +9,20 @@ class Player(Car):
     def __init__(self, x: int, y: int, color: str, velocity: float):
         Object.__init__(self, x, y, color)
 
-        self.velocity = velocity
         self.vertical_offset = y
         self.start_x = x
 
+        self.velocity = 0
         self.current_velocity = 0
         self.vertical_distance = 0
         self.y = 0
 
-        self.start()
+        self.start(velocity)
 
-    def start(self):
+    def start(self, max_velocity: float):
+        if max_velocity is not None:
+            self.velocity = float(max_velocity)
+
         self.x = self.start_x
         self.current_velocity = 0
         self.y = -self.vertical_offset

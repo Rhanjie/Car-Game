@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Canvas, Button
+from tkinter import Tk, Label, Canvas, Button, Listbox, EXTENDED, ACTIVE
 
 
 class GameManagerBase:
@@ -6,11 +6,10 @@ class GameManagerBase:
         self.window = Tk()
         self.window.title("Car Game - Python GUI Project")
 
-        self.label = Label(self.window, text="", font=('consolas', 20))
-        self.label.pack()
-
         self.canvas = Canvas(self.window, bg=color, height=height, width=width)
         self.canvas.pack()
+
+        self.label = Label(self.canvas, text="", font=('consolas', 20))
 
         self.window.update()
 
@@ -49,24 +48,50 @@ class GameManagerBase:
         self.window.after(miliseconds, self.__next_turn)
 
     def display_main_menu_screen(self):
-        self.is_main_menu = False  # TODO
+        self.canvas.delete('all')
 
-        self.__next_turn()
+        x = self.canvas.winfo_width() / 2
+        y = self.canvas.winfo_height() / 2
+
+        difficulty = Listbox(self.window)
+        difficulty.insert(0, 'Easy (200km/h)')
+        difficulty.insert(1, 'Medium (300km/h)')
+        difficulty.insert(2, 'Hard (400km/h)')
+        difficulty.insert(3, 'Hardcore (500km/h)')
+        difficulty.selection_set(1)
+        self.canvas.create_window(x, y + 60, window=difficulty)
+
+        self.canvas.create_text(x, y - 150, font=('consolas', 40), text="Car Game", fill="white")
+        self.canvas.create_text(x, y - 100, font=('consolas', 30), text="Python GUI Project", fill="white")
+
+        button_restart = Button(self.window, text="START", relief='flat',
+                                command=lambda: self.restart(self.get_velocity_from_difficulty(difficulty)))
+        self.canvas.create_window(x, y - 50, window=button_restart)
+
+        button_back = Button(self.window, text="QUIT", command=self.quit, relief='flat')
+        self.canvas.create_window(x, y + 170, window=button_back)
 
     def display_game_over_screen(self):
         self.canvas.delete('all')
+
+    def restart(self, max_velocity: [float, None]):
+        self.is_main_menu = False
+        self.is_game_over = False
+
+        self._restart_gameplay(max_velocity)
 
     def back_to_main_menu(self):
         self.is_main_menu = True
         self.is_game_over = False
 
-        self._restart_gameplay()
+        self._restart_gameplay(None)
 
-    def restart(self):
-        self.is_main_menu = False
-        self.is_game_over = False
+    def quit(self):
+        self.window.destroy()
 
-        self._restart_gameplay()
-
-    def _restart_gameplay(self):
+    def _restart_gameplay(self, max_velocity: [float, None]):
         self.__next_turn()
+
+    @staticmethod
+    def get_velocity_from_difficulty(listbox: Listbox) -> float:
+        return 200 + 100 * listbox.curselection()[0]

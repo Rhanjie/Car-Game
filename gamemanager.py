@@ -38,11 +38,11 @@ class GameManager(GameManagerBase):
         self.terrain.draw(self.canvas, current_distance)
         self.player.draw(self.canvas, 0)
 
-    def _restart_gameplay(self):
+    def _restart_gameplay(self, max_velocity: [float, None]):
         self.terrain.start()
-        self.player.start()
+        self.player.start(max_velocity)
 
-        GameManagerBase._restart_gameplay(self)
+        GameManagerBase._restart_gameplay(self, max_velocity)
 
     def display_game_over_screen(self):
         GameManagerBase.display_game_over_screen(self)
@@ -56,7 +56,7 @@ class GameManager(GameManagerBase):
 
         self.canvas.create_line(x - 300, y + 100, x + 300, y + 100, fill="white")
 
-        button_restart = Button(self.window, text="RESTART", command=self.restart, relief='flat')
+        button_restart = Button(self.window, text="RESTART", command=lambda: self.restart(None), relief='flat')
         self.canvas.create_window(x - 100, y + 140, window=button_restart)
 
         button_back = Button(self.window, text="BACK TO MAIN MENU", command=self.back_to_main_menu, relief='flat')
