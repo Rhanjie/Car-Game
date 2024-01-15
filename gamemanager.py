@@ -31,12 +31,16 @@ class GameManager(GameManagerBase):
     def draw(self):
         GameManagerBase.draw(self)
 
+        self.draw_ui()
+
+        self.terrain.draw(self.canvas, self.player.vertical_distance)
+        self.player.draw(self.canvas, 0)
+
+    def draw_ui(self):
         current_distance = self.player.vertical_distance
 
-        self.label.config(text="Points:{} - {} km/h".format(int(current_distance), self.player.current_velocity))
-
-        self.terrain.draw(self.canvas, current_distance)
-        self.player.draw(self.canvas, 0)
+        self.canvas.create_text(680, 200, font=('consolas', 20), text="Distance\n{}m".format(int(current_distance)), fill="white")
+        self.canvas.create_text(680, 300, font=('consolas', 20), text="{} km/h".format(self.player.current_velocity), fill="white")
 
     def _restart_gameplay(self, max_velocity: [float, None]):
         self.terrain.start()
